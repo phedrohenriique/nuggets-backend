@@ -87,7 +87,7 @@ async def users_login(request):
             return sn.json({"token":token, "data": payload})
     except Exception as error:
         print(f"{error}")
-        return sn.json({"message": f"{error}"})
+        return sn.json({"message": f"{error}"}, 400)
 
 
 @users.patch("login/<user_id:uuid>/edit")
@@ -99,20 +99,26 @@ async def user_update(request, user_id):
     id = user_id
     name = request.json.get("name")
     email = request.json.get("email")
-    password = request.json.get("password")
+    password = str(request.json.get("password"))
 
     query = """
-        update users
-        set (
+        UPDATE users
+        SET 
             name = $2,
             email = $3,
             password = $4
-        )
-        where id = $1
-        returning id, name, email, password
+        
+        WHERE id = $1
+        RETURNING id, name, email, password
     """
     try:
+        password = password.encode()
+        password = hs.sha256(password).hexdigest()
+
         result = await connection.fetch(query, id, name, email, password)
         result = [map_users(result) for result in result]
-    except:
-        pass
+        return sn.json({"message": "user updated", "data": result[0]})
+    except Exception as error:
+         print(f'{error}')
+         return sn.json({"message:" : f"{error}"}, 501)
+        

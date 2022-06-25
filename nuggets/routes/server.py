@@ -71,19 +71,23 @@ async def get_authorized_info(request):
 
 ## middleware is executed in order if it is request type
 
-# @server.middleware("request")
-# async def passing_middleware(request):
-#     print("passing middleware")
+## @server.middleware("request")
+## async def passing_middleware(request):
+##     print("passing middleware")
 
-#     return sn.json({"message":"middleware_route"})
+##     return sn.json({"message":"middleware_route"})
+
+## route_params have to be passed in the route as /example/12346789
 
 @server.get('/example/<route_params:str>')
 async def route_example_route_params(request, route_params):
 
     return sn.json({"route_params": route_params})
 
+## route_args can be used in the route as /example?args=[args]
+
 @server.get('/example')
 async def route_example_route_args(request):
 
     route_args = request.args.get("args", None)
-    return sn.json({"args": route_args})
+    return sn.json({"route_args": route_args})
