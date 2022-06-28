@@ -7,6 +7,9 @@ from configuration import authorized, SECRET_KEY
 
 server = sn.Blueprint('server',url_prefix='/server')
 
+## this is an example file suited for the user to see how
+## syntax, methods and framework sani work with pools and routes
+
 ## routes being setted with sn.Blueprint() method and exported
 ## all routes can be acessed within the main file
 
@@ -59,6 +62,7 @@ async def server_users(request):
     result = [dict(result) for result in result]
     response = result
     
+    await pool.release(connection) ## all connections must be released after query executed
 
     return sn.json(response, 200)
 

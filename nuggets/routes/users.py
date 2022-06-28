@@ -1,4 +1,11 @@
-from unicodedata import name
+from database import get_users_list
+from configuration import (
+    invalid_fields,
+    database_error,
+    not_authorized,
+    success_response,
+    error_response
+)
 import sanic as sn
 from connection import create_pool
 from mappers import map_users
@@ -10,21 +17,10 @@ users = sn.Blueprint('users', url_prefix='/users')
 
 @users.get('/')
 async def get_users(request):
-    pool = await create_pool()
-    connection = await pool.acquire()
-
-    query = """
-        SELECT id, name, email
-        FROM users
-    """
-    try:
-        result = await connection.fetch(query)  
-        result = [map_users(result) for result in result]
-        response = result
-        return sn.json(response, 200)
-    except Exception as error :
-        print(f"{error}")
-        return sn.json({"message": f"{error}"})
+    users_list = await get_users_list()
+    if not users_list:
+        return error_response(database_error)
+    return success_response(users_list)
 
 @users.post('/')
 async def post_users(request):
