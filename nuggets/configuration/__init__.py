@@ -9,3 +9,5 @@ from .variables import (
 )
 
 from .decorators import authorized
+
+import responses

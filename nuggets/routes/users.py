@@ -109,7 +109,7 @@ async def user_update(request, user_id):
             password = $4
         
         WHERE id = $1
-        RETURNING id, name, email, password
+        RETURNING id, name, email
     """
     try:
         password = password.encode()
