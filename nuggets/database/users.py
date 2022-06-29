@@ -27,3 +27,6 @@ async def get_users_list():
     finally:
         await pool.release(connection)
         return result
+
+async def post_user():
+    pass
