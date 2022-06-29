@@ -1,4 +1,4 @@
-from database import get_users_list
+from controllers import users_list_controller
 from configuration import (
     invalid_fields,
     database_error,
@@ -16,8 +16,8 @@ import jwt
 users = sn.Blueprint('users', url_prefix='/users')
 
 @users.get('/')
-async def get_users(request):
-    users_list = await get_users_list()
+async def get_users_list(request):
+    users_list = await users_list_controller()
     if not users_list:
         return error_response(database_error)
     return success_response(users_list)

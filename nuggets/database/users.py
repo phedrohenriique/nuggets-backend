@@ -9,7 +9,7 @@ from configuration import (
 from mappers import map_users
 
 
-async def get_users_list():
+async def users_list_database():
     pool = await create_pool()
     connection = await pool.acquire()
 
