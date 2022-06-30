@@ -12,9 +12,6 @@ from configuration import (
     error_response
     )
 import sanic as sn
-from connection import create_pool
-from mappers import map_users
-import hashlib as hs
 from configuration import authorized
 
 users = sn.Blueprint('users', url_prefix='/users')
@@ -48,7 +45,7 @@ async def users_login(request):
 
     result = await post_users_login_controller(data)
     if not result:
-        error_response(not_authorized)
+        return error_response(not_authorized)
     
     return success_response(result)
 
@@ -59,11 +56,13 @@ async def user_update(request, user_id):
 ## can get token information without needing another query with request.token object from the route
     token = request.token
     data = request.json
-    print(data)
+
     if not (token or data):
         return error_response(invalid_fields)
 
     response = await patch_users_edit_controller(user_id, token, data)
+    if not response:
+        return error_response(database_error)
 
     return success_response(response)
         

@@ -1,6 +1,7 @@
 ## handlers all the function logic to be passe through the routes
 
 from database import (
+    get_users,
     get_users_list_database,
     post_users_database,
     post_users_login_database,
@@ -59,12 +60,16 @@ async def post_users_login_controller(data):
     return result
 
 async def patch_users_edit_controller(user_id, token, data):
+    user = await get_users(user_id)
+
     data_user = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
     data_user = data_user["user"]
+    data_user["password"] = user["password"]
 
     data_update = data
-    data_update["password"] = str(data_update["password"]).encode()
-    data_update["password"] = hs.sha256(data_update["password"]).hexdigest()
+    if data_update.get("password"):
+        data_update["password"] = str(data_update["password"]).encode()
+        data_update["password"] = hs.sha256(data_update["password"]).hexdigest() 
 
     data_update["name"] = data_update["name"] if data_update.get("name") else data_user["name"]
     data_update["password"] = data_update["password"] if data_update.get("password") else data_user["password"]

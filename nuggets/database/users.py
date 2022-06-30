@@ -1,7 +1,6 @@
 ## handles all the queries and manipulate database information 
 
 import logging
-from typing import final
 from sanic.log import logger
 from connection import create_pool
 from mappers import map_users
@@ -24,6 +23,29 @@ async def get_users_list_database():
         logger.exception("Failed to retrieve users list : ", error)
         return None
 
+    finally:
+        await pool.release(connection)
+        return response
+
+async def get_users(user_id):
+    pool = await create_pool()
+    connection = await pool.acquire()
+
+    query_get_users = """
+        SELECT *
+        FROM users
+        WHERE id = $1
+    """
+
+    response = []
+
+    try:
+        result = await connection.fetch(query_get_users, user_id)
+        result = [map_users(result) for result in result]
+        response = result[0]
+    except Exception as error:
+        logger.exception("Failed to get user : ", error)
+        return None
     finally:
         await pool.release(connection)
         return response

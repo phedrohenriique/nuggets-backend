@@ -1,4 +1,5 @@
 from .users import (
+    get_users,
     get_users_list_database,
     post_users_database,
     post_users_login_database,

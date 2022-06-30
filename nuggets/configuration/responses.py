@@ -27,7 +27,7 @@ database_error = {
 }
 
 def error_response(data):
-    return json(data, data.error.code)
+    return json(data, data["error"]["code"])
 
 ## response success messages
 
