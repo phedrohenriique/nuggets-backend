@@ -1,6 +1,8 @@
 from controllers import (
-    users_list_controller,
-    post_users_controller
+    get_users_list_controller,
+    post_users_controller,
+    post_users_login_controller,
+    patch_users_edit_controller
     )
 from configuration import (
     invalid_fields,
@@ -13,14 +15,13 @@ import sanic as sn
 from connection import create_pool
 from mappers import map_users
 import hashlib as hs
-from configuration import SECRET_KEY, authorized
-import jwt
+from configuration import authorized
 
 users = sn.Blueprint('users', url_prefix='/users')
 
 @users.get('/')
 async def get_users_list(request):
-    users_list = await users_list_controller()
+    users_list = await get_users_list_controller()
 
     if not users_list:
         return error_response(database_error)
@@ -30,78 +31,39 @@ async def get_users_list(request):
 @users.post('/')
 async def post_users(request):
     data = request.json
+    if not data:
+        return error_response(invalid_fields)
 
     result = await post_users_controller(data)
-    
+    if not result:
+        return error_response(database_error)
+
     return success_response(result)
 
 @users.post('/login')
 async def users_login(request):
-    pool = await create_pool()
-    connection = await pool.acquire()
+    data = request.json
+    if not data:
+        return error_response(invalid_fields)
+
+    result = await post_users_login_controller(data)
+    if not result:
+        error_response(not_authorized)
     
-    email = request.json.get('email')
-    password = request.json.get('password')
-    hash_password = hs.sha256(str(password).encode()).hexdigest()
-
-    query_login = """
-        SELECT id, name, email, password
-        FROM users
-        WHERE email = $1
-    """
-    try:
-        result = await connection.fetch(query_login, email)
-        result = [map_users(result) for result in result]
-        db_password = result[0].get('password')
-        if db_password != hash_password:
-            return
-        if db_password == hash_password:
-
-            key = SECRET_KEY
-            payload = {
-                "message": "user logged in",
-                "user": {
-                    "id": result[0].get("id"),
-                    "email": result[0].get("email"),
-                    "name": result[0].get("name")
-                }
-            }
-            token = jwt.encode(payload, key, "HS256")
-            return sn.json({"token":token, "data": payload})
-    except Exception as error:
-        print(f"{error}")
-        return sn.json({"message": f"{error}"}, 400)
+    return success_response(result)
 
 
 @users.patch("login/<user_id:uuid>/edit")
 @authorized
 async def user_update(request, user_id):
-    pool = await create_pool()
-    connection = await pool.acquire()
+## can get token information without needing another query with request.token object from the route
+    token = request.token
+    data = request.json
+    print(data)
+    if not (token or data):
+        return error_response(invalid_fields)
 
-    id = user_id
-    name = request.json.get("name")
-    email = request.json.get("email")
-    password = str(request.json.get("password"))
+    response = await patch_users_edit_controller(user_id, token, data)
 
-    query = """
-        UPDATE users
-        SET 
-            name = $2,
-            email = $3,
-            password = $4
-        
-        WHERE id = $1
-        RETURNING id, name, email
-    """
-    try:
-        password = password.encode()
-        password = hs.sha256(password).hexdigest()
-
-        result = await connection.fetch(query, id, name, email, password)
-        result = [map_users(result) for result in result]
-        return sn.json({"message": "user updated", "data": result[0]})
-    except Exception as error:
-         print(f'{error}')
-         return sn.json({"message:" : f"{error}"}, 501)
+    return success_response(response)
         

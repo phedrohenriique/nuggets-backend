@@ -1,4 +1,6 @@
 from .users import (
-    users_list_controller,
-    post_users_controller
+    get_users_list_controller,
+    post_users_controller,
+    post_users_login_controller,
+    patch_users_edit_controller
     )
