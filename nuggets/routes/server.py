@@ -95,3 +95,14 @@ async def route_example_route_args(request):
 
     route_args = request.args.get("args", None)
     return sn.json({"route_args": route_args})
+
+
+@server.middleware("request")
+async def cors_policy(request):
+    print("middleware")
+
+
+@server.get('/middleware')
+async def middleware_cors(request):
+
+    return sn.json({"response": "ok"})
