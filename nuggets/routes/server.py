@@ -105,4 +105,4 @@ async def cors_policy(request):
 @server.get('/middleware')
 async def middleware_cors(request):
 
-    return sn.json({"response": "ok"})
+    return sn.json({"response": "ok"}, headers= {"Access-Control-Allow-Origin": "*"})

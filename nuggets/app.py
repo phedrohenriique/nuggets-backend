@@ -1,4 +1,5 @@
 import sanic as sn
+
 import routes as rt
 import configuration as config
 
@@ -7,7 +8,6 @@ import configuration as config
 
 app = sn.Sanic('nuggets')
 app.blueprint(rt.routes)
-
 
 ## app object will be running the routes = sn.Blueprint.group() where all the routes will be stated
 

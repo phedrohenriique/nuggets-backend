@@ -32,4 +32,10 @@ def error_response(data):
 ## response success messages
 
 def success_response(data):
-    return json(data, 200)
+    headers = {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
+    }
+
+    return json(data, 200, headers=headers)
