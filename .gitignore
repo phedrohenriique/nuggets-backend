@@ -1,6 +1,3 @@
 ## files to be ignored in the repository
 .env
 __pycache__
-server.key
-server.pem
-client.pem
