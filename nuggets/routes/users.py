@@ -13,6 +13,7 @@ from configuration import (
     )
 import sanic as sn
 from configuration import authorized
+from sanic import exceptions
 
 users = sn.Blueprint('users', url_prefix='/users')
 
@@ -33,6 +34,7 @@ async def post_users(request):
 
     result = await post_users_controller(data)
     if not result:
+        ##raise exceptions.ServerError("server error")
         return error_response(database_error)
 
     return success_response(result)
