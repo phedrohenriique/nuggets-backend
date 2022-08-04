@@ -1,4 +1,4 @@
-from sanic import json
+from sanic import json, response
 
 ## response error messages
 
@@ -32,10 +32,12 @@ def error_response(data):
 ## response success messages
 
 def success_response(data):
-    headers = {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-    }
+    # headers = {
+    #     "Content-Type": "application/json",
+    #     "Access-Control-Allow-Origin": "*",
+    #     "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+    # }
 
-    return json(data, 200, headers=headers)
+    # headers=headers    
+
+    return response.json(data, 200)

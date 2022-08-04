@@ -1,7 +1,7 @@
 ## handlers all the function logic to be passe through the routes
 
 from database import (
-    get_users,
+    get_users_database,
     get_users_list_database,
     post_users_database,
     post_users_login_database,
@@ -60,7 +60,7 @@ async def post_users_login_controller(data):
     return result
 
 async def patch_users_edit_controller(user_id, token, data):
-    user = await get_users(user_id)
+    user = await get_users_database(user_id)
 
     data_user = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
     data_user = data_user["user"]

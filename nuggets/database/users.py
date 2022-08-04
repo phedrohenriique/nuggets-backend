@@ -27,7 +27,7 @@ async def get_users_list_database():
         await pool.release(connection)
         return response
 
-async def get_users(user_id):
+async def get_users_database(user_id):
     pool = await create_pool()
     connection = await pool.acquire()
 
