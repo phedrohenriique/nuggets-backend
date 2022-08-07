@@ -78,3 +78,8 @@ async def patch_users_edit_controller(user_id, token, data):
     result = await patch_users_edit_database(user_id, data_update)
     
     return result
+
+async def user_token_info_controller(token):
+    data_user = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+    return data_user
+    

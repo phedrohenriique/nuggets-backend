@@ -10,10 +10,10 @@ app = sn.Sanic('nuggets')
 app.blueprint(rt.routes)
 CORS(app)
 
-##app.config.CORS_ORIGINS = "*"  ## need to be setted to send response CORS allowed headers
-##app.config.CORS_METHODS = ["OPTIONS","GET", "POST", "PATCH"]
-app.config.RESPONSE_TIMEOUT = 1
-app.config.REQUEST_TIMEOUT = 1
+## app.config.CORS_ORIGINS = "*"  ## need to be setted to send response CORS allowed headers
+## app.config.CORS_METHODS = ["OPTIONS","GET", "POST", "PATCH"]
+## app.config.RESPONSE_TIMEOUT = 1
+## app.config.REQUEST_TIMEOUT = 1
 
 ## app object will be running the routes = sn.Blueprint.group() where all the routes will be stated
 

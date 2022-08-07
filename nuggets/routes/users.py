@@ -2,7 +2,8 @@ from controllers import (
     get_users_list_controller,
     post_users_controller,
     post_users_login_controller,
-    patch_users_edit_controller
+    patch_users_edit_controller,
+    user_token_info_controller
     )
 from configuration import (
     invalid_fields,
@@ -52,7 +53,7 @@ async def users_login(request):
     return success_response(result)
 
 
-@users.patch("login/<user_id:uuid>/edit")
+@users.patch("/login/<user_id:uuid>/edit")
 @authorized
 async def user_update(request, user_id):
 ## can get token information without needing another query with request.token object from the route
@@ -68,3 +69,14 @@ async def user_update(request, user_id):
 
     return success_response(response)
         
+@users.get("/login/user")
+@authorized
+async def user_login(request):
+
+    token = request.token
+    response = await user_token_info_controller(token)
+
+    if not response:
+        return error_response(database_error)
+    
+    return success_response(response)
