@@ -18,6 +18,10 @@ def hash_test():
 
 ########################################
 
+dict = {}
+
+########################################
+
 ########################################
 
 ## __main__ variable is the file being executed, if the executed file is
@@ -25,5 +29,7 @@ def hash_test():
 
 if __name__ == "__main__":
     print('this')
+    dict["parameter"] = 1
+    print(dict)
 
 ########################################

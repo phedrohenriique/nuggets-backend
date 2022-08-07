@@ -7,6 +7,9 @@ from configuration import authorized, SECRET_KEY
 
 server = sn.Blueprint('server',url_prefix='/server')
 
+## this is an example file suited for the user to see how
+## syntax, methods and framework sani work with pools and routes
+
 ## routes being setted with sn.Blueprint() method and exported
 ## all routes can be acessed within the main file
 
@@ -59,6 +62,7 @@ async def server_users(request):
     result = [dict(result) for result in result]
     response = result
     
+    await pool.release(connection) ## all connections must be released after query executed
 
     return sn.json(response, 200)
 
@@ -71,19 +75,34 @@ async def get_authorized_info(request):
 
 ## middleware is executed in order if it is request type
 
-# @server.middleware("request")
-# async def passing_middleware(request):
-#     print("passing middleware")
+## @server.middleware("request")
+## async def passing_middleware(request):
+##     print("passing middleware")
 
-#     return sn.json({"message":"middleware_route"})
+##     return sn.json({"message":"middleware_route"})
+
+## route_params have to be passed in the route as /example/12346789
 
 @server.get('/example/<route_params:str>')
 async def route_example_route_params(request, route_params):
 
     return sn.json({"route_params": route_params})
 
+## route_args can be used in the route as /example?args=[args]
+
 @server.get('/example')
 async def route_example_route_args(request):
 
     route_args = request.args.get("args", None)
-    return sn.json({"args": route_args})
+    return sn.json({"route_args": route_args})
+
+
+@server.middleware("request")
+async def cors_policy(request):
+    print("middleware")
+
+
+@server.get('/middleware')
+async def middleware_cors(request):
+
+    return sn.json({"response": "ok"}, headers= {"Access-Control-Allow-Origin": "*"})
